@@ -1,11 +1,13 @@
-// pages/create.js (Modern & User-Friendly)
+// pages/create.js
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { PROMPT_CATEGORIES } from '@/util/PromptCategories';
 import { useAuth } from '@/util/AuthContext';
+import { ALL_SUBCATEGORIES } from '@/util/PromptCategories';
 
 export default function CreatePrompt() {
   const { user } = useAuth();
+  const router = useRouter();
+
   const [form, setForm] = useState({
     promptText: '',
     aiTool: 'Midjourney',
@@ -14,15 +16,14 @@ export default function CreatePrompt() {
     imagePreview: null,
   });
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    
+
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
-      
+
       reader.onloadend = () => {
         setForm((prev) => ({
           ...prev,
@@ -30,7 +31,6 @@ export default function CreatePrompt() {
           imagePreview: reader.result,
         }));
       };
-      
       reader.readAsDataURL(file);
     } else {
       setForm((prev) => ({
@@ -41,50 +41,40 @@ export default function CreatePrompt() {
   };
 
   const handleCategoryToggle = (category) => {
-    setForm(prev => {
+    setForm((prev) => {
       const isSelected = prev.category.includes(category);
-      
       if (isSelected) {
-        return {
-          ...prev,
-          category: prev.category.filter(c => c !== category)
-        };
+        return { ...prev, category: prev.category.filter(c => c !== category) };
       } else {
         if (prev.category.length >= 3) {
           alert('You can select a maximum of 3 categories.');
           return prev;
         }
-        return {
-          ...prev,
-          category: [...prev.category, category]
-        };
+        return { ...prev, category: [...prev.category, category] };
       }
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!form.promptText || form.category.length === 0 || !form.aiTool || !form.image) {
       alert('Please fill all fields, select 1-3 categories, and upload an image.');
       return;
     }
-    
+
     setLoading(true);
-    
+
     const formData = new FormData();
     formData.append('promptText', form.promptText);
     formData.append('aiTool', form.aiTool);
     form.category.forEach(cat => formData.append('category[]', cat));
     formData.append('image', form.image);
-    
+
     try {
-      const res = await fetch('/api/prompts', {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await fetch('/api/prompts', { method: 'POST', body: formData });
       const data = await res.json();
-      
+
       if (data.success) {
         alert('Prompt created successfully!');
         router.push('/');
@@ -102,9 +92,7 @@ export default function CreatePrompt() {
     }
   };
 
-  if (!user && !router.pathname.includes('login')) {
-    return null;
-  }
+  if (!user && !router.pathname.includes('login')) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 py-8 px-4">
@@ -135,10 +123,7 @@ export default function CreatePrompt() {
                   className="hidden"
                   required
                 />
-                <label
-                  htmlFor="image"
-                  className="block cursor-pointer"
-                >
+                <label htmlFor="image" className="block cursor-pointer">
                   {form.imagePreview ? (
                     <div className="relative group">
                       <img
@@ -214,8 +199,9 @@ export default function CreatePrompt() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Categories (Select 1-3)
                 </label>
+
                 <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg">
-                  {PROMPT_CATEGORIES.map(cat => (
+                  {ALL_SUBCATEGORIES.map(cat => (
                     <button
                       key={cat}
                       type="button"
@@ -230,6 +216,7 @@ export default function CreatePrompt() {
                     </button>
                   ))}
                 </div>
+
                 <p className="text-xs text-gray-500 mt-2">
                   {form.category.length}/3 selected
                   {form.category.length > 0 && (
@@ -241,10 +228,10 @@ export default function CreatePrompt() {
               </div>
             </div>
           </div>
+
           {/* Submit Button */}
           <div className="text-center">
             <button
-
               type="submit"
               disabled={loading}
               className={`inline-block w-full md:w-auto bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 ${
