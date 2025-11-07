@@ -126,7 +126,7 @@ const PromptCard = ({ initialPrompt, onUpdate }) => {
         {/* Image Section - Square aspect ratio */}
         <div className="w-full overflow-hidden relative">
           {/* ⭐️ Views and Likes Badge ⭐️ */}
-          <div className="absolute top-2 right-2 z-10 bg-black bg-opacity-40 backdrop-blur-sm rounded-full px-3 py-1 text-sm text-white font-semibold flex items-center space-x-2">
+          <div className="absolute top-2 right-2 z-5 bg-black bg-opacity-40 backdrop-blur-sm rounded-full px-3 py-1 text-sm text-white font-semibold flex items-center space-x-2">
             
             {/* Views */}
             <span className="flex items-center gap-1">

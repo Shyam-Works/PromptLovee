@@ -42,7 +42,7 @@ const Header = () => {
         <button
           onClick={handleCreateClick}
           // The button is tall/wide on sm+ screens, but smaller/icon-only on mobile
-          className="bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 px-3 sm:px-6 rounded-full shadow-lg transition transform hover:scale-105 flex items-center justify-center"
+          className="bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-3 sm:px-6 rounded-full shadow-lg transition transform hover:scale-105 flex items-center justify-center"
         >
           <FaPlus className="w-4 h-4 sm:hidden" /> {/* Show icon only on small screens */}
           <span className="hidden sm:inline">+ Create Prompt</span> {/* Show text on sm+ screens */}
