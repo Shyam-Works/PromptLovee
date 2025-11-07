@@ -52,7 +52,7 @@ const Header = () => {
         {user ? (
           <>
             <Link href="/profile" className="flex items-center text-gray-700 hover:text-pink-600 transition">
-              <FaUserCircle className="w-6 h-6 mr-0 sm:mr-1" /> {/* Reduce margin on mobile */}
+              <FaUserCircle className="w-8 h-8 mr-0 sm:mr-1" /> {/* Reduce margin on mobile */}
               <span className="hidden md:inline font-semibold">{user.username}</span> {/* Hide username on small (sm) and medium (md) screens, show only on large screens */}
             </Link>
             <button

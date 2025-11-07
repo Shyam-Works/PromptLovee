@@ -74,7 +74,7 @@ export default function Profile() {
   return (
     <div className="p-4">
       <h1 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">
-        👤 Your Prompts ({user.username})
+        Your Prompts
       </h1>
       
       {error && <div className="text-red-500 text-center py-4">{error}</div>}

@@ -15,53 +15,51 @@ const Modal = ({ isOpen, onClose, prompt }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl w-full max-w-5xl h-[85vh] relative flex flex-col"
+        className="bg-white rounded-xl w-full max-w-3xl sm:max-w-4xl md:max-w-5xl 
+                   max-h-[85vh] sm:max-h-[90vh] md:max-h-[95vh] relative flex flex-col overflow-hidden shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition z-10"
+          className="absolute top-3 sm:top-4 right-3 sm:right-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition z-10 shadow"
         >
           <AiOutlineClose className="text-xl" />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 h-full overflow-hidden">
-          {/* Image Side - Fixed container with centered image */}
-         <div className="flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden w-[70%] max-h-[70vh]">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 p-4 md:p-5 overflow-hidden h-full">
+          {/* Image Side */}
+          <div className="flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden
+                h-80 sm:h-96 md:h-[90vh] md:w-2/5">
   <img
     src={prompt.imageUrl}
     alt="AI Generated Art"
-    className="max-w-full max-h-full object-contain"
+    className="max-h-full max-w-full object-contain"
   />
 </div>
 
 
-
           {/* Details Side */}
-          <div className="flex flex-col h-full overflow-hidden">
-            <h2 className="text-2xl font-bold text-gray-800 mb-3">Prompt Details</h2>
-
-            <p className="text-xs font-semibold text-pink-500 uppercase tracking-wider mb-3">
+          <div className="flex flex-col md:w-3/5 gap-3 md:gap-4 overflow-y-auto">
+            <h2 className="text-xl sm:text-2xl md:text-2xl font-bold text-gray-800">Prompt Details</h2>
+            <p className="text-xs sm:text-sm md:text-sm font-semibold text-pink-500 uppercase tracking-wider">
               AI Tool: {prompt.aiTool}
             </p>
 
-            {/* Scrollable Description Box - Fixed Height */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300 mb-4 h-64 overflow-y-auto">
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">The Prompt:</h3>
-              <p className="text-gray-600 whitespace-pre-wrap break-words">
-                {prompt.promptText}
-              </p>
+            <div className="bg-gray-50 p-3 md:p-4 rounded-lg border border-dashed border-gray-300 
+                            overflow-y-auto max-h-40 sm:max-h-52 md:max-h-72">
+              <h3 className="text-md sm:text-lg md:text-lg font-semibold text-gray-700 mb-1">The Prompt:</h3>
+              <p className="text-gray-600 whitespace-pre-wrap break-words">{prompt.promptText}</p>
             </div>
 
             <button
               onClick={copyToClipboard}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition mb-4 flex-shrink-0"
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 rounded-lg transition"
             >
-              Copy Prompt to Clipboard
+              Copy Prompt
             </button>
 
-            <div className="flex gap-4 text-sm text-gray-500 flex-shrink-0">
+            <div className="flex gap-4 text-sm text-gray-500 mt-2">
               <span className="flex items-center gap-1">
                 <AiFillEye /> {prompt.views} views
               </span>

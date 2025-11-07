@@ -5,7 +5,6 @@ import PromptCard from '@/components/PromptCard';
 import { MAIN_CATEGORIES, CATEGORY_MAP } from '@/util/PromptCategories';
 
 
-// ⚠️ Combined Filter Component for Hover Functionality
 const FilterContainer = ({ 
     mainCategories, 
     selectedMain, 
