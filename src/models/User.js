@@ -1,4 +1,4 @@
-// models/User.js
+// models/User.js (Minor Update)
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -16,9 +16,21 @@ const UserSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters'],
     select: false, // Important: Don't return password by default
   },
+  // ⭐️ NEW FIELD: Array to track prompts liked by this user
+  likedPrompts: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Prompt',
+    default: [],
+  },
 }, { timestamps: true });
 
 // Hash password before saving
+// ... (pre('save') remains the same)
+
+// Method to compare passwords
+// ... (matchPassword remains the same)
+
+// ... (Pre-save and matchPassword methods remain the same)
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -28,7 +40,6 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-// Method to compare passwords
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
