@@ -1,76 +1,75 @@
-import { AiFillEye, AiFillHeart } from 'react-icons/ai';
-import { useState } from 'react';
-import Modal from './Modal';
-import React from 'react';
+import React, { useState } from "react";
+import { AiFillEye, AiFillHeart } from "react-icons/ai";
+import Modal from "./Modal";
+import { useAuth } from "@/util/AuthContext";
+import { useRouter } from "next/router";
 
-const PromptCard = ({ initialPrompt, onUpdate }) => { 
-  const [prompt, setPrompt] = useState(initialPrompt); 
+const PromptCard = ({ initialPrompt, onUpdate }) => {
+  const [prompt, setPrompt] = useState(initialPrompt);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const handleLike = async (e) => {
     e.stopPropagation();
     if (isLiking) return;
-    
     setIsLiking(true);
-    const updatedPrompt = { ...prompt, likes: prompt.likes + 1 };
-    setPrompt(updatedPrompt);
-    
-    if (onUpdate) {
-      await onUpdate(updatedPrompt);
-    }
-    
+    const updated = { ...prompt, likes: prompt.likes + 1 };
+    setPrompt(updated);
+    onUpdate && (await onUpdate(updated));
     setTimeout(() => setIsLiking(false), 500);
   };
 
   const handleCardClick = async () => {
-    const updatedPrompt = { ...prompt, views: prompt.views + 1 };
-    setPrompt(updatedPrompt);
-    
-    if (onUpdate) {
-      await onUpdate(updatedPrompt);
+    if (!user) {
+      alert("You must be logged in to view listing details.");
+      router.push("/login");
+      return;
     }
-    
+    const updated = { ...prompt, views: prompt.views + 1 };
+    setPrompt(updated);
+    onUpdate && (await onUpdate(updated));
     setIsModalOpen(true);
   };
 
   return (
     <>
-      <div 
-        className="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      <div
         onClick={handleCardClick}
+        className="group bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col"
       >
-        {/* Image */}
-        <div className="aspect-square overflow-hidden">
-  <img
-    src={prompt.imageUrl}
-    alt="AI Generated Art"
-    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-    loading="lazy"
-  />
-</div>
-        
-        {/* Overlay for Views/Likes */}
-        <div className="absolute top-2 right-2 flex gap-2 p-2 bg-black bg-opacity-50 rounded-lg text-white text-xs">
-          <span className="flex items-center gap-1">
-            <AiFillEye /> {prompt.views}
-          </span>
-          <button 
-            onClick={handleLike} 
-            className="flex items-center gap-1 hover:scale-110 transition-transform disabled:opacity-50"
-            disabled={isLiking}
-            aria-label="Like this prompt"
-          >
-            <AiFillHeart className="text-red-400" /> {prompt.likes}
-          </button>
+        {/* Image Section - Square aspect ratio */}
+        <div className="w-full overflow-hidden">
+          <img
+            src={prompt.imageUrl}
+            alt="AI Generated Art"
+            className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+
+        {/* Text Section - Compact */}
+        <div className="p-3">
+          {/* Prompt Preview with fade */}
+          <div className="relative">
+            <p className="text-md text-gray-600 leading-snug line-clamp-4">
+  {(prompt.promptText?.split(" ").slice(0, 20).join(" ") || "Click to see more details") +
+    (prompt.promptText?.split(" ").length > 20 ? "..." : "")}
+</p>
+
+            <span className="text-pink-600 text-xs font-medium mt-1 inline-block">
+              Read more...
+            </span>
+          </div>
         </div>
       </div>
-      
-      {/* Modal to display details on click */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        prompt={prompt} 
+
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        prompt={prompt}
       />
     </>
   );
