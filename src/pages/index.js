@@ -1,6 +1,8 @@
 // index.js (Finalized with Hover/Flyout Subcategories)
 import React, { useState, useEffect, useMemo } from 'react';
 import PromptCard from '@/components/PromptCard';
+import Masonry from 'react-masonry-css';
+
 // Assuming you created a file like util/CategoryMap.js
 import { MAIN_CATEGORIES, CATEGORY_MAP } from '@/util/PromptCategories';
 
@@ -121,7 +123,12 @@ export default function Home() {
     
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1
+  };
     useEffect(() => {
         loadPrompts();
     }, []);
@@ -209,10 +216,12 @@ export default function Home() {
         );
     }
 
-    return (
-        <div className="px-6 py-10 max-w-7xl mx-auto">
+    return ( 
+        // no space at left or right and take div whole width
+        <div className="w-full py-10 px-0 ">
+
             <h1 className="text-3xl md:text-5xl font-extrabold text-gray-800 mb-10 text-center">
-                Find Your Next Prompt Inspiration
+                Find Your Next <span className='text-pink-600'>Prompt</span> Inspiration
             </h1>
 
             {/* Combined Filter Component */}
@@ -236,7 +245,12 @@ export default function Home() {
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                <div className="container mx-auto px-4">
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column"
+      >
                     {filteredPrompts.map((prompt) => (
                         <PromptCard
                             key={prompt._id}
@@ -244,7 +258,8 @@ export default function Home() {
                             onUpdate={handlePromptUpdate}
                         />
                     ))}
-                </div>
+                </Masonry>
+    </div>
             )}
         </div>
     );
