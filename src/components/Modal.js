@@ -1,12 +1,17 @@
 import React from 'react';
 import { AiOutlineClose, AiFillEye, AiFillHeart } from 'react-icons/ai';
+import { useState } from 'react';
 
 const Modal = ({ isOpen, onClose, prompt }) => {
+  const [isCopied, setIsCopied] = useState(false);
   if (!isOpen) return null;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(prompt.promptText);
-    alert('Prompt copied to clipboard!');
+    setIsCopied(true);
+    setTimeout(() => {
+        setIsCopied(false);
+    }, 2000);
   };
 
   return (
@@ -53,11 +58,15 @@ const Modal = ({ isOpen, onClose, prompt }) => {
             </div>
 
             <button
-              onClick={copyToClipboard}
-              className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-2 rounded-lg transition"
-            >
-              Copy Prompt
-            </button>
+  onClick={copyToClipboard}
+  // Optional: Change button color slightly when copied for better feedback
+  className={`w-full text-white font-medium py-2 rounded-lg transition ${
+    isCopied ? 'bg-pink-600 hover:bg-pink-600' : 'bg-pink-500 hover:bg-pink-600'
+  }`}
+>
+  {/* Dynamic Text Display */}
+  {isCopied ? 'Copied!' : 'Copy Prompt'}
+</button>
 
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
               <span className="flex items-center gap-1">

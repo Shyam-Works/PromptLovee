@@ -2,7 +2,7 @@
 import '@/../../dist/output.css'; 
 import Header from '@/components/Header';
 import { AuthProvider } from '@/util/AuthContext'; // NEW IMPORT
-
+import './index.css';
 function MyApp({ Component, pageProps }) {
   return (
     // **NEW: AuthProvider Wrapper**
