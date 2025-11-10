@@ -10,7 +10,7 @@ export default function CreatePrompt() {
 
   const [form, setForm] = useState({
     promptText: '',
-    aiTool: 'Midjourney',
+    aiTool: 'Gemini',
     category: [],
     image: null,
     imagePreview: null,
@@ -95,7 +95,7 @@ export default function CreatePrompt() {
   if (!user && !router.pathname.includes('login')) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 py-8 px-4">
+    <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

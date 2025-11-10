@@ -68,6 +68,23 @@ const Modal = ({ isOpen, onClose, prompt }) => {
   {isCopied ? 'Copied!' : 'Copy Prompt'}
 </button>
 
+// Inside the PromptModal component:
+{/* Creator Section */}
+<div className="flex items-center justify-between p-2 bg-purple-50 rounded-lg border border-purple-200">
+    <div className="flex items-center">
+        <span className="text-xl mr-2">👤</span>
+        <span className="text-sm font-semibold text-purple-800">
+            Creator: {prompt.creatorName}
+        </span>
+    </div>
+    <button
+        onClick={() => onCreatorClick(prompt.creatorId, prompt.creatorName)}
+        className="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full hover:bg-purple-600 transition shadow-md"
+    >
+        View All Prompts
+    </button>
+</div>
+
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
               <span className="flex items-center gap-1">
                 <AiFillEye /> {prompt.views} views
