@@ -1,4 +1,4 @@
-// pages/api/prompts/[id].js (Updated/Completed)
+// pages/api/prompts/[id].js (Updated)
 import connectDB from '../../../util/connectDB';
 import Prompt from '../../../models/Prompt';
 
@@ -27,12 +27,14 @@ export default async function handler(req, res) {
 
     case 'PUT':
       try {
-        const { likes, views } = req.body;
+        const { likes, views, likedBy, viewedBy } = req.body;
         
-        // **Restrict updates to ONLY likes and views (cannot modify content)**
+        // **Restrict updates to ONLY likes, views, likedBy, and viewedBy**
         const updateData = {};
         if (likes !== undefined) updateData.likes = likes;
         if (views !== undefined) updateData.views = views;
+        if (likedBy !== undefined) updateData.likedBy = likedBy;
+        if (viewedBy !== undefined) updateData.viewedBy = viewedBy;
 
         if (Object.keys(updateData).length === 0) {
           return res.status(400).json({ success: false, error: 'No valid update fields provided.' });

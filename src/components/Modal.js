@@ -1,17 +1,81 @@
-import React from 'react';
-import { AiOutlineClose, AiFillEye, AiFillHeart } from 'react-icons/ai';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { AiOutlineClose, AiFillEye, AiFillHeart, AiOutlineShareAlt, AiOutlineCheck } from 'react-icons/ai';
+import { useAuth } from '@/util/AuthContext';
+import { useRouter } from 'next/router';
 
-const Modal = ({ isOpen, onClose, prompt }) => {
+const Modal = ({ isOpen, onClose, prompt, onUpdate }) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  
   const [isCopied, setIsCopied] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  
+  const [isLiked, setIsLiked] = useState(
+    !!user && (prompt.likedBy || []).includes(user.id)
+  );
+
   if (!isOpen) return null;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(prompt.promptText);
     setIsCopied(true);
     setTimeout(() => {
-        setIsCopied(false);
+      setIsCopied(false);
     }, 2000);
+  };
+
+  const copyLinkToClipboard = () => {
+    const url = `${window.location.origin}/prompts/${prompt._id}`;
+    navigator.clipboard.writeText(url);
+    setIsLinkCopied(true);
+    setTimeout(() => {
+      setIsLinkCopied(false);
+    }, 2000);
+  };
+
+  const handleLike = async (e) => {
+    e.stopPropagation();
+
+    if (!user) {
+      alert("Please log in to like/unlike a prompt.");
+      router.push("/login");
+      return;
+    }
+
+    if (isLiking) return;
+
+    setIsLiking(true);
+
+    try {
+      let updatedPrompt;
+
+      if (isLiked) {
+        const newLikedBy = (prompt.likedBy || []).filter(
+          (userId) => userId !== user.id
+        );
+        updatedPrompt = {
+          ...prompt,
+          likes: prompt.likes - 1,
+          likedBy: newLikedBy,
+        };
+        setIsLiked(false);
+      } else {
+        updatedPrompt = {
+          ...prompt,
+          likes: prompt.likes + 1,
+          likedBy: [...(prompt.likedBy || []), user.id],
+        };
+        setIsLiked(true);
+      }
+
+      onUpdate && (await onUpdate(updatedPrompt));
+    } catch (error) {
+      console.error('Like/Unlike failed:', error);
+      alert('An error occurred while trying to update the like status.');
+    } finally {
+      setTimeout(() => setIsLiking(false), 500);
+    }
   };
 
   return (
@@ -21,7 +85,7 @@ const Modal = ({ isOpen, onClose, prompt }) => {
     >
       <div
         className="bg-white rounded-xl w-full max-w-3xl sm:max-w-4xl md:max-w-5xl 
-                   max-h-[85vh] sm:max-h-[90vh] md:max-h-[95vh] relative flex flex-col overflow-hidden shadow-lg"
+                   max-h-[85vh] sm:max-h-[9vh] md:max-h-[95vh] relative flex flex-col overflow-hidden shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -36,13 +100,12 @@ const Modal = ({ isOpen, onClose, prompt }) => {
           {/* Image Side */}
           <div className="flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden
                 h-80 sm:h-96 md:h-[90vh] md:w-2/5">
-  <img
-    src={prompt.imageUrl}
-    alt="AI Generated Art"
-    className="max-h-full max-w-full object-contain"
-  />
-</div>
-
+            <img
+              src={prompt.imageUrl}
+              alt="AI Generated Art"
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
 
           {/* Details Side */}
           <div className="flex flex-col md:w-3/5 gap-3 md:gap-4 overflow-y-auto">
@@ -57,25 +120,50 @@ const Modal = ({ isOpen, onClose, prompt }) => {
               <p className="text-gray-600 whitespace-pre-wrap break-words">{prompt.promptText}</p>
             </div>
 
-            <button
-  onClick={copyToClipboard}
-  // Optional: Change button color slightly when copied for better feedback
-  className={`w-full text-white font-medium py-2 rounded-lg transition ${
-    isCopied ? 'bg-pink-600 hover:bg-pink-600' : 'bg-pink-500 hover:bg-pink-600'
-  }`}
->
-  {/* Dynamic Text Display */}
-  {isCopied ? 'Copied!' : 'Copy Prompt'}
-</button>
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <button
+                onClick={copyToClipboard}
+                className={`flex-1 text-white font-medium py-2 rounded-lg transition ${
+                  isCopied ? 'bg-pink-600 hover:bg-pink-600' : 'bg-pink-500 hover:bg-pink-600'
+                }`}
+              >
+                {isCopied ? 'Copied!' : 'Copy Prompt'}
+              </button>
 
+              <button
+                onClick={copyLinkToClipboard}
+                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition ${
+                  isLinkCopied 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {isLinkCopied ? (
+                  <>
+                    <AiOutlineCheck className="text-lg" />
+                    Link Copied!
+                  </>
+                ) : (
+                  <>
+                    <AiOutlineShareAlt className="text-lg" />
+                    Share
+                  </>
+                )}
+              </button>
+            </div>
 
-
+            {/* Stats */}
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
               <span className="flex items-center gap-1">
                 <AiFillEye /> {prompt.views} views
               </span>
-              <span className="flex items-center gap-1">
-                <AiFillHeart className="text-red-400" /> {prompt.likes} likes
+              <span 
+                className="flex items-center gap-1 cursor-pointer hover:text-red-500 transition"
+                onClick={handleLike}
+              >
+                <AiFillHeart className={isLiked ? 'text-red-500' : 'text-gray-400'} />
+                {prompt.likes} likes
               </span>
             </div>
           </div>

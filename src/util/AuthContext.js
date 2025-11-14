@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     // Prevent rendering app until auth check is complete
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-pink-600">Checking session...</div>
+        <div className="text-xl text-pink-600">Welcome to PromptLover</div>
       </div>
     );
   }
