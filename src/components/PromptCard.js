@@ -89,7 +89,7 @@ const PromptCard = ({ initialPrompt, onUpdate }) => {
       try {
         const updatedPrompt = {
           ...prompt,
-          views: prompt.views + 10,
+          views: prompt.views + 1,
           viewedBy: [...(prompt.viewedBy || []), user.id],
         };
 
